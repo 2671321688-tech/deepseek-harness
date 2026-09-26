@@ -1,0 +1,203 @@
+// @vitest-environment jsdom
+
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { act, cleanup, fireEvent, render } from '@testing-library/react'
+import { makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
+import { en as commonEn, zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/index.ts'
+import { ContextMeter, type ContextMeterProps } from '../src/client/skeleton/ContextMeter.tsx'
+import { contextOccupancy } from '../src/client/context-occupancy.ts'
+import css from '../src/client/skeleton/ContextMeter.module.css'
+import { en, zh } from '../src/client/locales.ts'
+
+afterEach(() => { cleanup(); vi.useRealTimers() })
+
+const t = makeTranslate(zh, commonZh) as ContextMeterProps['t']
+const tEn = makeTranslate(en, commonEn) as ContextMeterProps['t']
+
+const BREAKDOWN = { systemTokens: 120, toolsTokens: 21_500, messageTokens: 477_000 }
+
+const segmentClass = css.segment
+if (segmentClass === undefined) throw new Error('segment class missing from ContextMeter.module.css')
+
+function projections(values: Record<string, unknown>): ContextMeterProps['useProjection'] {
+  return (key: string) => values[key]
+}
+
+function meter(values: Record<string, unknown>, translate: ContextMeterProps['t'] = t) {
+  return render(<ContextMeter useProjection={projections(values)} t={translate} />)
+}
+
+describe('ContextMeter', () => {
+  it('computes occupancy only when both a numerator and capacity are known', () => {
+    expect(contextOccupancy({ pressureTokens: 32_000, projectedTokens: 6_000, contextWindow: 128_000 }))
+      .toEqual({ percent: 5, usedTokens: 6_000, contextWindow: 128_000 })
+    expect(contextOccupancy({ pressureTokens: 32_000, contextWindow: 128_000 }))
+      .toEqual({ percent: 25, usedTokens: 32_000, contextWindow: 128_000 })
+    expect(contextOccupancy({ pressureTokens: 32_000 })).toBeNull()
+    expect(contextOccupancy({ contextWindow: 128_000 })).toBeNull()
+    expect(contextOccupancy(undefined)).toBeNull()
+    expect(contextOccupancy({ pressureTokens: 300_000, contextWindow: 128_000 })?.percent).toBe(100)
+  })
+
+  it('renders nothing until both pressure and capacity are known', () => {
+    expect(meter({}).container.textContent).toBe('')
+    expect(meter({ contextPressure: { pressureTokens: 32_000 } }).container.textContent).toBe('')
+    expect(meter({ contextPressure: { contextWindow: 128_000 } }).container.textContent).toBe('')
+  })
+
+  it('shows the occupancy ring and opens the breakdown panel on click', () => {
+    const view = meter({
+      contextPressure: { pressureTokens: 32_000, contextWindow: 128_000 },
+      contextBreakdown: BREAKDOWN,
+    })
+    const trigger = view.getByRole('button', { name: '上下文已用 25%' })
+    expect(view.queryByRole('dialog')).toBeNull()
+    fireEvent.click(trigger)
+    const panel = view.queryByRole('dialog')!
+    expect(panel.textContent).toContain('~32K / 128K')
+    expect(panel.textContent).toContain('25%')
+    expect(panel.textContent).toContain('上下文已用')
+    expect(panel.textContent).toContain('系统提示词~120')
+    expect(panel.textContent).toContain('工具定义~21.5K')
+    expect(panel.textContent).toContain('对话消息~477K')
+    // The occupancy bar splits into one colored segment per composition row.
+    expect(panel.getElementsByClassName(segmentClass)).toHaveLength(3)
+    // Clicking the trigger again toggles the panel shut.
+    fireEvent.click(trigger)
+    expect(view.queryByRole('dialog')).toBeNull()
+  })
+
+  it('lets each locale own the headline word order around the reading', () => {
+    const values = {
+      contextPressure: { pressureTokens: 32_000, contextWindow: 128_000 },
+      contextBreakdown: BREAKDOWN,
+    }
+    const zhView = meter(values)
+    fireEvent.click(zhView.getByRole('button', { name: '上下文已用 25%' }))
+    // The reading follows the label in Chinese and leads it in English; both
+    // headers read as one sentence rather than a concatenated fragment.
+    expect(zhView.queryByRole('dialog')!.textContent)
+      .toMatch(/^上下文已用25%/)
+    const enView = meter(values, tEn)
+    fireEvent.click(enView.getByRole('button', { name: '25% of context used' }))
+    expect(enView.queryByRole('dialog', { name: 'of context used' })!.textContent)
+      .toMatch(/^25%of context used/)
+  })
+
+  it('draws no bar segment at zero occupancy', () => {
+    const view = meter({
+      contextPressure: { pressureTokens: 0, contextWindow: 128_000 },
+      contextBreakdown: BREAKDOWN,
+    })
+    fireEvent.click(view.getByRole('button', { name: '上下文已用 0%' }))
+    const panel = view.queryByRole('dialog')!
+    // `.segment` carries a min-width, so a zero-width part would still paint a
+    // filled sliver over an empty context.
+    expect(panel.getElementsByClassName(segmentClass)).toHaveLength(0)
+    expect(panel.textContent).toContain('~0 / 128K')
+  })
+
+  it('reads the ring from the projected figure so a compaction shows at once', () => {
+    // Same provider sample, a surface a compaction just shrank: the ring must
+    // follow the projection rather than the sample it is anchored to.
+    const view = meter({
+      contextPressure: { pressureTokens: 32_000, projectedTokens: 3_000, contextWindow: 128_000 },
+      contextBreakdown: BREAKDOWN,
+    })
+    const trigger = view.getByRole('button', { name: '上下文已用 2%' })
+    fireEvent.click(trigger)
+    expect(view.queryByRole('dialog')!.textContent).toContain('~3K / 128K')
+  })
+
+  it('omits the composition rows while the contextBreakdown projection is absent', () => {
+    const view = meter({ contextPressure: { pressureTokens: 32_000, contextWindow: 128_000 } })
+    fireEvent.click(view.getByRole('button', { name: '上下文已用 25%' }))
+    const panel = view.queryByRole('dialog')!
+    expect(panel.textContent).toContain('~32K / 128K')
+    expect(panel.textContent).not.toContain('系统提示词')
+    expect(panel.textContent).not.toContain('对话消息')
+    expect(panel.textContent).toContain('分项统计暂不可用')
+    // Without composition shares, the bar falls back to one plain segment.
+    expect(panel.getElementsByClassName(segmentClass)).toHaveLength(1)
+  })
+
+  it('increases depth with occupancy and warns only near capacity', () => {
+    const values = { contextPressure: { pressureTokens: 121_600, contextWindow: 128_000 } }
+    const view = meter(values)
+    const capsule = view.container.querySelector(`.${css.capsule}`)
+    const fill = view.container.querySelector(`.${css.capsuleFill}`) as HTMLElement
+    expect(capsule?.hasAttribute('data-high')).toBe(true)
+    expect(capsule?.hasAttribute('data-critical')).toBe(false)
+    expect(Number(fill.style.opacity)).toBeCloseTo(0.864)
+    fireEvent.click(view.getByRole('button', { name: '上下文已用 95%' }))
+    expect(view.queryByRole('dialog')?.textContent).toContain('接近上限，建议压缩对话')
+    view.rerender(<ContextMeter useProjection={projections({ contextPressure: {
+      pressureTokens: 126_720, contextWindow: 128_000,
+    } })} t={t} />)
+    expect(view.container.querySelector(`.${css.capsule}`)?.hasAttribute('data-critical')).toBe(true)
+  })
+
+  it('opens on a deliberate hover and closes after leaving both trigger and panel', () => {
+    vi.useFakeTimers()
+    const view = meter({ contextPressure: { pressureTokens: 32_000, contextWindow: 128_000 } })
+    const root = view.container.firstElementChild!
+    fireEvent.mouseEnter(root)
+    act(() => { vi.advanceTimersByTime(199) })
+    expect(view.queryByRole('dialog')).toBeNull()
+    act(() => { vi.advanceTimersByTime(1) })
+    const panel = view.queryByRole('dialog')!
+    expect(panel).not.toBeNull()
+    fireEvent.mouseLeave(root)
+    act(() => { vi.advanceTimersByTime(100) })
+    fireEvent.mouseEnter(panel)
+    act(() => { vi.advanceTimersByTime(100) })
+    expect(view.queryByRole('dialog')).not.toBeNull()
+    fireEvent.mouseLeave(panel)
+    act(() => { vi.advanceTimersByTime(150) })
+    expect(view.queryByRole('dialog')).toBeNull()
+  })
+
+  it('closes when capacity disappears and stays closed when it returns', () => {
+    let values: Record<string, unknown> = {
+      contextPressure: { pressureTokens: 32_000, contextWindow: 128_000 },
+      contextBreakdown: BREAKDOWN,
+    }
+    const view = render(<ContextMeter useProjection={(key: string) => values[key]} t={t} />)
+    fireEvent.click(view.getByRole('button', { name: '上下文已用 25%' }))
+    expect(view.queryByRole('dialog')).not.toBeNull()
+
+    values = { contextPressure: { pressureTokens: 32_000 }, contextBreakdown: BREAKDOWN }
+    view.rerender(<ContextMeter useProjection={(key: string) => values[key]} t={t} />)
+    expect(view.container.textContent).toBe('')
+
+    values = {
+      contextPressure: { pressureTokens: 32_000, contextWindow: 128_000 },
+      contextBreakdown: BREAKDOWN,
+    }
+    view.rerender(<ContextMeter useProjection={(key: string) => values[key]} t={t} />)
+    expect(view.getByRole('button', { name: '上下文已用 25%' }).getAttribute('aria-expanded')).toBe('false')
+    expect(view.queryByRole('dialog')).toBeNull()
+  })
+
+  it('closes on outside pointerdown and Escape — but not inside clicks', () => {
+    const view = meter({
+      contextPressure: { pressureTokens: 32_000, contextWindow: 128_000 },
+      contextBreakdown: BREAKDOWN,
+    })
+    const trigger = view.getByRole('button', { name: '上下文已用 25%' })
+    const openPanel = () => {
+      fireEvent.click(trigger)
+      return view.queryByRole('dialog')!
+    }
+    // A pointerdown inside the panel keeps it open; outside closes it.
+    const again = openPanel()
+    fireEvent.pointerDown(again)
+    expect(view.queryByRole('dialog')).not.toBeNull()
+    fireEvent.pointerDown(document.body)
+    expect(view.queryByRole('dialog')).toBeNull()
+    // Escape.
+    openPanel()
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(view.queryByRole('dialog')).toBeNull()
+  })
+})

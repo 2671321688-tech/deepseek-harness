@@ -1,0 +1,322 @@
+/* The framework-free boot page cannot depend on theme delivery succeeding. */
+
+.boot {
+  --dsh-boot-label-primary: #232830;
+  --dsh-boot-label-secondary: #626a75;
+  --dsh-boot-label-tertiary: #8a919b;
+  --dsh-boot-border: rgb(15 17 21 / 12%);
+  --dsh-boot-brand: #626a75;
+  --dsh-boot-ease: var(--dsh-ease-emphasized, cubic-bezier(0.3, 0, 0, 1));
+
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  background-color: #fff;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #fff;
+  transition: opacity 600ms var(--dsh-boot-ease);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.whaleWrap {
+  width: min(340px, 55vw);
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 600ms var(--dsh-boot-ease), opacity 600ms var(--dsh-boot-ease);
+}
+
+.whaleWrap svg {
+  width: 100%;
+  display: block;
+}
+
+.whaleFill {
+  fill: #f7f8fa;
+  opacity: 0;
+}
+.boot[data-drawing] .whaleFill {
+  animation: whale-fill 700ms cubic-bezier(0.2, 0, 0, 1) 500ms forwards;
+}
+.boot[data-skipped] .whaleFill,
+.boot[data-drawn] .whaleFill {
+  animation: none;
+  opacity: 1;
+}
+
+.whaleInner {
+  display: none;
+}
+.boot[data-drawing] .whaleInner {
+  animation: whale-inner 700ms cubic-bezier(0.2, 0, 0, 1) 500ms forwards;
+}
+.boot[data-skipped] .whaleInner,
+.boot[data-drawn] .whaleInner {
+  animation: none;
+  opacity: 0.32;
+}
+
+.whaleGlow {
+  display: none;
+}
+.whaleRim {
+  stroke: #434b55;
+  stroke-width: 2.4px;
+}
+
+.whaleRim, .whaleGlow {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.boot[data-drawing] .whaleRim,
+.boot[data-drawing] .whaleGlow {
+  animation: write-whale 1000ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.boot[data-skipped] .whaleRim,
+.boot[data-skipped] .whaleGlow,
+.boot[data-drawn] .whaleRim,
+.boot[data-drawn] .whaleGlow {
+  animation: none;
+  stroke-dashoffset: 0;
+}
+
+@keyframes whale-fill {
+  to { opacity: 1; }
+}
+@keyframes whale-inner {
+  to { opacity: 0.32; }
+}
+@keyframes write-whale {
+  to { stroke-dashoffset: 0; }
+}
+
+
+.sceneryWrap {
+  display: none;
+}
+.scenery {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.horizon {
+  opacity: 0;
+}
+.boot[data-drawing] .horizon {
+  animation: horizon-in 1400ms cubic-bezier(0.65, 0, 0.35, 1) 400ms forwards;
+}
+.boot[data-skipped] .horizon,
+.boot[data-drawn] .horizon {
+  animation: none;
+  opacity: 0.28;
+}
+@keyframes horizon-in { to { opacity: 0.28; } }
+
+.streaks path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.boot[data-drawing] .streaks path {
+  animation: streak-in 1400ms cubic-bezier(0.65, 0, 0.35, 1) 400ms forwards;
+}
+.boot[data-skipped] .streaks path,
+.boot[data-drawn] .streaks path {
+  animation: none;
+  stroke-dashoffset: 0;
+}
+@keyframes streak-in { to { stroke-dashoffset: 0; } }
+
+.signature {
+  /* signature width ~440px */
+  width: min(440px, 70vw);
+  color: var(--dsh-boot-label-primary);
+  transition:
+    transform 600ms var(--dsh-boot-ease),
+    opacity 600ms var(--dsh-boot-ease),
+    filter 600ms var(--dsh-boot-ease);
+}
+
+.signatureCore svg {
+  display: block;
+  width: 100%;
+}
+
+/* The pen waits for the window to be shown; data-drawing starts it. */
+.signatureCore path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  stroke: currentColor;
+}
+
+.boot[data-drawing] .signatureCore path {
+  animation: write var(--dsh-stroke-duration) cubic-bezier(0.45, 0, 0.25, 1) var(--dsh-stroke-delay) both;
+}
+
+/* Skipped, reduced, or off: the signature is shown complete at rest. */
+.boot[data-skipped] .signature path,
+.boot[data-drawn] .signatureCore path {
+  animation: none;
+  stroke-dashoffset: 0;
+}
+
+@keyframes write {
+  to { stroke-dashoffset: 0; }
+}
+
+.wordmark {
+  font-family: 'SF Mono', 'Cascadia Code', Consolas, monospace;
+  font-size: 13px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: 0.7em;
+  padding-left: 0.7em;
+  color: #77808b;
+  opacity: 0;
+  transition: transform 600ms var(--dsh-boot-ease), opacity 200ms ease;
+}
+
+.boot[data-drawing] .wordmark {
+  opacity: 0;
+}
+.boot[data-skipped] .wordmark,
+.boot[data-drawn] .wordmark {
+  animation: harness-fade 550ms ease-out 150ms forwards;
+}
+
+@keyframes harness-fade {
+  to { opacity: 0.7; }
+}
+
+.hint {
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--dsh-boot-label-tertiary);
+}
+
+.spinner {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  corner-shape: round;
+  border: 2px solid var(--dsh-boot-border);
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: conic-gradient(
+    var(--dsh-boot-brand) var(--dsh-boot-arc, 72deg),
+    transparent 0
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0);
+}
+
+/* Progress appears only when loading outlasts the drawing. */
+.spinner,
+.hint {
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.boot[data-drawn]:not([data-leaving]) .spinner,
+.boot[data-drawn]:not([data-leaving]) .hint {
+  opacity: 1;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Leaving: the signature sinks (toward the depth mark when one exists) and the ground clears. */
+.boot[data-leaving] {
+  pointer-events: none;
+  background-color: transparent;
+}
+
+.boot[data-leaving] .bg {
+  opacity: 0;
+}
+
+.boot[data-leaving] .sceneryWrap {
+  opacity: 0;
+}
+
+.boot[data-leaving] .signature {
+  opacity: 0;
+  filter: blur(4px);
+}
+
+.boot[data-leaving] .signature:not([style*='transform']) {
+  transform: scale(0.92);
+}
+
+.boot[data-leaving] .wordmark,
+.boot[data-leaving] .whaleWrap {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+.boot[data-leaving='reduced'] .bg,
+.boot[data-leaving='reduced'] .sceneryWrap,
+.boot[data-leaving='reduced'] .whaleWrap,
+.boot[data-leaving='reduced'] .signature,
+.boot[data-leaving='reduced'] .wordmark {
+  transition-duration: 200ms;
+}
+
+.boot[data-leaving='reduced'] .signature {
+  filter: none;
+  transform: none;
+}
+.failed {
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.failedTitle {
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 600;
+  color: var(--dsh-boot-label-primary);
+}
+
+.failedItem {
+  font-family: var(
+    --ds-font-family-code,
+    'SF Mono',
+    'JetBrains Mono',
+    'Fira Code',
+    Consolas,
+    'Liberation Mono',
+    Menlo,
+    Courier,
+    'PingFang SC',
+    'Microsoft YaHei'
+  );
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--dsh-boot-label-secondary);
+  white-space: pre-wrap;
+}

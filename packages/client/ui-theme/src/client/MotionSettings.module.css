@@ -1,0 +1,9 @@
+.group { display: flex; flex-direction: column; gap: 24px; padding: 24px 0; border-bottom: 0.5px solid var(--dsw-alias-border-l1); }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.title { font-size: 14px; line-height: 22px; color: var(--dsw-alias-label-primary); }
+.row p { margin: 4px 0 0; max-width: 320px; font-size: 12px; line-height: 18px; color: var(--dsw-alias-label-tertiary); }
+.choices { display: flex; flex-shrink: 0; gap: 4px; }
+.choices button { padding: 7px 10px; border: 0.5px solid var(--dsw-alias-border-l1); border-radius: var(--dsw-radius-sm); background: transparent; color: var(--dsw-alias-label-secondary); font: inherit; font-size: 13px; cursor: pointer; }
+.choices button[aria-pressed='true'] { background: var(--dsw-alias-interactive-bg-active); color: var(--dsw-alias-label-primary); }
+.choices button:disabled { opacity: 0.5; cursor: default; }
+@media (max-width: 560px) { .row { flex-wrap: wrap; gap: 12px; } }

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "com.deepseek.harness",
+  "productName": "DeepSeek Harness",
+  "copyright": "Copyright © 2026 DeepSeek",
+  "directories": {
+    "output": "dist-release"
+  },
+  "files": [
+    "lib/main.js",
+    "lib/welcome/**/*",
+    "lib/preload-app.cjs",
+    "lib/preload-mandatory.cjs",
+    "lib/preload-platform-account.cjs",
+    "lib/preload-update-dialog.cjs",
+    "lib/preload-welcome.cjs",
+    "renderer/**/*",
+    "package.json"
+  ],
+  "extraResources": [
+    {
+      "from": "resources/icon.png",
+      "to": "icon.png"
+    }
+  ],
+  "win": {
+    "icon": "resources/icon-windows.png",
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      },
+      {
+        "target": "zip",
+        "arch": ["x64"]
+      }
+    ]
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "DeepSeek Harness"
+  },
+  "mac": {
+    "icon": "resources/icon-macos.png",
+    "category": "public.app-category.developer-tools",
+    "target": [
+      {
+        "target": "dmg",
+        "arch": ["x64", "arm64"]
+      },
+      {
+        "target": "zip",
+        "arch": ["x64", "arm64"]
+      }
+    ]
+  },
+  "linux": {
+    "icon": "resources/icon.png",
+    "category": "Development",
+    "target": [
+      {
+        "target": "AppImage",
+        "arch": ["x64"]
+      },
+      {
+        "target": "deb",
+        "arch": ["x64"]
+      }
+    ]
+  }
+}
