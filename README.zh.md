@@ -37,11 +37,11 @@
 
 我们为所有主流桌面操作系统提供了独立打包的可执行应用：
 
-| 操作系统 | 安装包格式 | 便携包 / 免安装格式 | 架构支持 |
+| 操作系统 | 格式与下载链接 | 文件名 | 架构与体积 |
 | :--- | :--- | :--- | :--- |
-| **Windows** | [📥 Setup .exe](https://github.com/2671321688-tech/deepseek-harness/releases/latest) | [📥 Portable .zip](https://github.com/2671321688-tech/deepseek-harness/releases/latest) | x64 / ARM64 |
-| **macOS** | [📥 .dmg (Apple Silicon)](https://github.com/2671321688-tech/deepseek-harness/releases/latest) | [📥 .dmg (Intel) / .zip](https://github.com/2671321688-tech/deepseek-harness/releases/latest) | Apple Silicon (M1/M2/M3/M4) / Intel x64 |
-| **Linux** | [📥 .deb (Debian/Ubuntu)](https://github.com/2671321688-tech/deepseek-harness/releases/latest) | [📥 .AppImage](https://github.com/2671321688-tech/deepseek-harness/releases/latest) | x64 |
+| **Windows** | [📥 便携绿色免安装版 (.zip)](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/DeepSeek-Harness-0.1.0-win-x64.zip) | `DeepSeek-Harness-0.1.0-win-x64.zip` | Windows x64 (162 MB) |
+| **macOS** | [📥 完整应用归档 (.zip)](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/DeepSeek-Harness-0.1.0-mac-arm64.zip) | `DeepSeek-Harness-0.1.0-mac-arm64.zip` | Apple Silicon M1-M4 (132 MB) |
+| **Linux** | [📥 免安装包 (.tar.gz)](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/DeepSeek-Harness-0.1.0-linux-x64.tar.gz) / [📥 Zip包](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/DeepSeek-Harness-0.1.0-linux-x64.zip) | `DeepSeek-Harness-0.1.0-linux-x64.tar.gz` | Linux x64 (124 MB) |
 
 > 💡 **提示**：您可以在 [GitHub Releases 页面](https://github.com/2671321688-tech/deepseek-harness/releases) 查看完整变更日志与校验哈希值。
 

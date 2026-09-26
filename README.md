@@ -37,11 +37,11 @@ All features are strictly implemented in code with zero fake proposal mockups:
 
 Pre-built standalone desktop binaries are available for all major platforms:
 
-| Operating System | Installer Package | Portable / Standalone Archive | Architecture |
+| Operating System | Package & Direct Download | Filename | Target Architecture & Size |
 | :--- | :--- | :--- | :--- |
-| **Windows** | [📥 Setup .exe](https://github.com/2671321688-tech/deepseek-harness/releases/latest) | [📥 Portable .zip](https://github.com/2671321688-tech/deepseek-harness/releases/latest) | x64 / ARM64 |
-| **macOS** | [📥 .dmg (Apple Silicon)](https://github.com/2671321688-tech/deepseek-harness/releases/latest) | [📥 .dmg (Intel) / .zip](https://github.com/2671321688-tech/deepseek-harness/releases/latest) | Apple Silicon (M1/M2/M3/M4) / Intel x64 |
-| **Linux** | [📥 .deb (Debian/Ubuntu)](https://github.com/2671321688-tech/deepseek-harness/releases/latest) | [📥 .AppImage](https://github.com/2671321688-tech/deepseek-harness/releases/latest) | x64 |
+| **Windows** | [📥 Portable Archive (.zip)](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/DeepSeek-Harness-0.1.0-win-x64.zip) | `DeepSeek-Harness-0.1.0-win-x64.zip` | Windows x64 (162 MB) |
+| **macOS** | [📥 Application Bundle (.zip)](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/DeepSeek-Harness-0.1.0-mac-arm64.zip) | `DeepSeek-Harness-0.1.0-mac-arm64.zip` | Apple Silicon M1-M4 (132 MB) |
+| **Linux** | [📥 Standalone Package (.tar.gz)](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/DeepSeek-Harness-0.1.0-linux-x64.tar.gz) / [📥 Zip](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/DeepSeek-Harness-0.1.0-linux-x64.zip) | `DeepSeek-Harness-0.1.0-linux-x64.tar.gz` | Linux x64 (124 MB) |
 
 > 💡 **Note**: Visit the [GitHub Releases Page](https://github.com/2671321688-tech/deepseek-harness/releases) to view release notes, checksums, and previous versions.
 

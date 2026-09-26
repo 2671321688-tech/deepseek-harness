@@ -2,6 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
   "appId": "com.deepseek.harness",
   "productName": "DeepSeek Harness",
+  "executableName": "deepseek-harness",
   "copyright": "Copyright © 2026 DeepSeek",
   "directories": {
     "output": "dist-release"
