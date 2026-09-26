@@ -13,8 +13,9 @@ import { WELCOME_IPC, type WelcomeOperations } from './welcome-api.ts'
  * @param locale - shell-owned localized copy.
  * @returns sandboxed window options with a locale-only preload.
  */
-export function welcomeWindowOptions(platform: NodeJS.Platform, locale: DesktopLocale): BrowserWindowConstructorOptions {
+export function welcomeWindowOptions(platform: NodeJS.Platform, locale: DesktopLocale, icon?: string): BrowserWindowConstructorOptions {
   return {
+    ...(icon !== undefined ? { icon } : {}),
     width: 600,
     height: 700,
     useContentSize: true,
@@ -54,10 +55,11 @@ let disposeActiveHandlers: (() => void) | undefined
  * Replaces IPC ownership immediately; the caller closes the previous native window.
  * @param locale - shell-owned localized copy.
  * @param operations - credential write and this-launch-only skip actions.
+ * @param icon - optional application icon path.
  * @returns the visible window; a failed load destroys it before rejecting.
  */
-export async function openWelcomeWindow(locale: DesktopLocale, operations: WelcomeOperations): Promise<BrowserWindow> {
-  const window = new BrowserWindow(welcomeWindowOptions(process.platform, locale))
+export async function openWelcomeWindow(locale: DesktopLocale, operations: WelcomeOperations, icon?: string): Promise<BrowserWindow> {
+  const window = new BrowserWindow(welcomeWindowOptions(process.platform, locale, icon))
   disposeActiveHandlers?.()
   let active = true
   const disposeHandlers = (): void => {

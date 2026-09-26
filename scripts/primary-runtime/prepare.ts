@@ -2,7 +2,7 @@
 
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { cp } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
@@ -103,6 +103,53 @@ export interface PreparePrimaryRuntimeOptions {
   readonly version: string
   /** Omit Node.js and pnpm for carriers providing only Python. */
   readonly pythonOnly?: boolean
+  /** Force re-extraction even if the payload is already up to date. */
+  readonly force?: boolean | undefined
+}
+
+/**
+ * Check whether an existing payload matches the locked inputs and component selection.
+ * @param options - Explicit target and carrier-owned output locations.
+ * @returns True if primary-runtime and office-skills exist and match lock digests.
+ */
+export function isPrimaryRuntimeUpToDate(
+  options: Pick<PreparePrimaryRuntimeOptions, 'target' | 'output' | 'pythonOnly'>,
+): boolean {
+  const { target, output, pythonOnly } = options
+  const runtimeDir = join(resolve(output), 'primary-runtime')
+  const runtimeJsonPath = join(runtimeDir, 'runtime.json')
+  if (!existsSync(runtimeJsonPath)) return false
+
+  let pnpmVersion: string | undefined
+  if (!pythonOnly) {
+    try {
+      const require = createRequire(import.meta.url)
+      const pnpmManifest = require.resolve('pnpm')
+      pnpmVersion = (JSON.parse(readFileSync(pnpmManifest, 'utf8')) as { version: string }).version
+    } catch {
+      return false
+    }
+  }
+
+  const expectedDigest = primaryRuntimePayloadDigest(target, lock, pnpmVersion)
+  try {
+    const raw: unknown = JSON.parse(readFileSync(runtimeJsonPath, 'utf8'))
+    const manifest = parsePrimaryRuntime(raw)
+    if (manifest.payloadDigest !== expectedDigest) return false
+
+    const entries = workspaceDependencyPaths(runtimeDir, manifest)
+    if (!existsSync(entries.python)) return false
+    if (!pythonOnly) {
+      if (!entries.node || !existsSync(entries.node)) return false
+      if (!entries.pnpm || !existsSync(entries.pnpm)) return false
+    }
+    const officeSkillsDir = join(resolve(output), 'office-skills')
+    if (!existsSync(officeSkillsDir)) return false
+
+    return true
+  } catch {
+    return false
+  }
 }
 
 /**
@@ -110,7 +157,10 @@ export interface PreparePrimaryRuntimeOptions {
  * @param options - Explicit target and carrier-owned output locations.
  * @returns Resolves after the complete payload and skills have been copied to the output directory.
  */
-export async function preparePrimaryRuntime(options: PreparePrimaryRuntimeOptions): Promise<void> {
+export async function preparePrimaryRuntime(options: PreparePrimaryRuntimeOptions): Promise<boolean> {
+  if (!options.force && isPrimaryRuntimeUpToDate(options)) {
+    return false
+  }
   const { target } = options
   const paths = { runtime: resolve(options.output), downloads: resolve(options.cache) }
   const artifact = lock.targets[target]
@@ -165,6 +215,7 @@ export async function preparePrimaryRuntime(options: PreparePrimaryRuntimeOption
   const require = createRequire(import.meta.url)
   await prepareOfficeSkillAssets(join(dirname(require.resolve('@deepseek-ai/dsh-skill-office/package.json')), 'assets'),
     join(paths.runtime, 'office-skills'))
+  return true
 }
 
 /**
@@ -192,16 +243,20 @@ if (import.meta.main) {
   const { values } = parseArgs({ options: {
     target: { type: 'string' }, output: { type: 'string' }, cache: { type: 'string' },
     'python-only': { type: 'boolean', default: false },
+    force: { type: 'boolean', default: false },
   } })
   if (!values.target || !Object.hasOwn(lock.targets, values.target) || !values.output) {
-    throw new Error(`Usage: pnpm run prepare:primary-runtime --target <${Object.keys(lock.targets).join('|')}> --output <directory> [--cache <directory>] [--python-only]`)
+    throw new Error(`Usage: pnpm run prepare:primary-runtime --target <${Object.keys(lock.targets).join('|')}> --output <directory> [--cache <directory>] [--python-only] [--force]`)
   }
   const { version } = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')) as { version: string }
   const output = resolve(values.output)
-  await preparePrimaryRuntime({
+  const prepared = await preparePrimaryRuntime({
     target: values.target as PrimaryRuntimeTarget, output,
     cache: values.cache ?? join(tmpdir(), 'dsh-primary-runtime-downloads'), version,
     pythonOnly: values['python-only'],
+    force: values.force,
   })
-  smokePrimaryRuntime(join(output, 'primary-runtime'))
+  if (prepared) {
+    smokePrimaryRuntime(join(output, 'primary-runtime'))
+  }
 }

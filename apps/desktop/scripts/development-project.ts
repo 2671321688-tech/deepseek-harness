@@ -144,6 +144,26 @@ export function prepareDevelopmentProject(options: DevelopmentProjectOptions): s
     throw new Error('desktop development: apps/desktop-host/lib/index.js is missing; run pnpm run build')
   }
 
+  const runtimePath = join(options.projectDir, DESKTOP_RUNTIME_FILE)
+  if (existsSync(runtimePath)) {
+    try {
+      const existing = JSON.parse(readFileSync(runtimePath, 'utf8')) as DesktopRuntimeDescriptor
+      if (
+        existing.schemaVersion === 1
+        && existing.release?.version === options.release.version
+        && existing.release?.hostProtocolVersion === options.release.hostProtocolVersion
+        && existing.release?.nodeVersion === options.release.nodeVersion
+        && existing.release?.pnpmVersion === options.release.pnpmVersion
+        && existsSync(join(options.projectDir, 'node_modules', '@deepseek-ai', 'dsh'))
+        && existsSync(join(options.projectDir, 'node_modules', '@deepseek-ai', 'dsh-desktop-host'))
+      ) {
+        return options.projectDir
+      }
+    } catch {
+      // Rebuild on corrupt manifest
+    }
+  }
+
   removeOwnedPath(options.projectDir)
   createDevelopmentProjectMetadata(options.projectDir, options.release)
   const destinationModules = join(options.projectDir, 'node_modules')

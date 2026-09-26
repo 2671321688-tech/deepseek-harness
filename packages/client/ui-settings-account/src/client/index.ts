@@ -49,7 +49,7 @@ export function apply(ctx: Context): void {
   const listeners = new Set<() => void>()
   const publish = (value: AccountSnapshot) => { snapshot = value; for (const listener of listeners) listener() }
   /** @returns the client identity for one account call, read at call time so it carries the language and zone in effect then. */
-  const client = () => accountClientMetadata(ctx.locale.getSnapshot().active, process.env.DSH_CLIENT_VERSION)
+  const client = () => accountClientMetadata(ctx.locale.getSnapshot().active, process.env.DSH_CLIENT_VERSION || '0.1.0')
   // The browser half of the notice lifecycle: reads when the account becomes
   // active and on an explicit refresh, and acknowledges an order only after its
   // card reports a presented frame. The Host owns which bonus is unnotified and
@@ -161,7 +161,7 @@ export function apply(ctx: Context): void {
     refreshAccount,
     contactUs() {
       const url = contactUrl(config, {
-        version: process.env.DSH_CLIENT_VERSION,
+        version: process.env.DSH_CLIENT_VERSION || '0.1.0',
         locale: ctx.locale.getSnapshot().active === 'zh' ? 'zh-CN' : 'en',
         width: window.screen.width, height: window.screen.height, pixelRatio: window.devicePixelRatio,
       })

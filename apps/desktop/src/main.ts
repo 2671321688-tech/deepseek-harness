@@ -78,6 +78,18 @@ const rendererConsole = new RendererConsoleTail()
 // set before ready so the first fatal report already resolves under it.
 app.setAppLogsPath()
 
+app.name = 'DeepSeek Harness'
+if (process.platform === 'win32') {
+  app.setAppUserModelId('com.deepseek.harness')
+}
+
+function applicationIconPath(): string {
+  const development = !app.isPackaged
+  return development
+    ? join(app.getAppPath(), 'resources', process.platform === 'win32' ? 'icon.ico' : 'icon.png')
+    : join(process.resourcesPath, process.platform === 'win32' ? 'icon.ico' : 'icon.png')
+}
+
 function currentDesktopLocale(): ReturnType<typeof resolveDesktopLocale> {
   return resolveDesktopLocale(windowsLanguage ?? app.getLocale())
 }
@@ -201,6 +213,7 @@ function platformLoginUrl(authorizeUrl: string): string {
 
 function createWindow(preload: string, show = false, primary = false): BrowserWindow {
   const window = new BrowserWindow({
+    icon: applicationIconPath(),
     width: 1280,
     height: 820,
     minWidth: 520,
@@ -871,15 +884,14 @@ async function main(): Promise<void> {
     updates.dispose()
   })
 
-  const applicationIconPath = development ? join(app.getAppPath(), 'resources', 'icon-windows.png')
-    : join(process.resourcesPath, 'icon.png')
+  const appIcon = applicationIconPath()
   app.setAboutPanelOptions({
     applicationName: 'DeepSeek Harness',
     applicationVersion: app.getVersion(),
     // The release has no separate build number; omit Electron's bundle version.
     version: '',
     copyright: '',
-    iconPath: applicationIconPath,
+    iconPath: appIcon,
   })
   // A custom application menu replaces Electron's default menu, so macOS needs
   // its standard menus and application hide commands declared explicitly.
@@ -1117,7 +1129,7 @@ async function main(): Promise<void> {
           return { ok: true }
         },
         skip: enterWorkspace,
-      })
+      }, applicationIconPath())
       const window = welcomeWindow
       window.once('closed', () => {
         void welcomeBackend?.account.state().then((state) => {
