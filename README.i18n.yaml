@@ -2,33 +2,33 @@
 # section, a hash of its English and Chinese blocks outside code blocks and generated regions.
 # After editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write README.md
-/deepseek-harness-desktop-0-1:
-  en: e5a7830088a03ef7
-  zh: 66b78dd27d1a8fae
-/deepseek-harness-desktop-0-1/watch-the-desktop-demo:
-  en: 757331294f102469
-  zh: ceb7ff9911848c49
-/deepseek-harness-desktop-0-1/key-highlights-in-0-1-production-ready:
-  en: 41a4a4359fa75183
-  zh: cd73dce11e3470a9
-/deepseek-harness-desktop-0-1/downloadable-applications-v0-1:
-  en: 59ebbba5fc7db84a
-  zh: 23037b5397f5e2dc
-/deepseek-harness-desktop-0-1/building-development:
+/deepseek-harness-0-1:
+  en: 1acead53475fc310
+  zh: 28775b5e2a674cc6
+/deepseek-harness-0-1/watch-the-project-tour:
+  en: 3dc46e91ffb2dea0
+  zh: 38e3a531fe81f23a
+/deepseek-harness-0-1/what-the-0-1-app-shows:
+  en: c8fbcf0eb4c6a285
+  zh: f32c1a0ea20c21ad
+/deepseek-harness-0-1/downloadable-applications-v0-1:
+  en: 960ca2351b12cc09
+  zh: 89597699ddd58dfa
+/deepseek-harness-0-1/building-development:
   en: 952b017f4c3dadaf
   zh: 6441066c60126f32
-/deepseek-harness-desktop-0-1/building-development/prerequisites:
-  en: 4fcad36c373d3f83
-  zh: fca709ad2273f061
-/deepseek-harness-desktop-0-1/building-development/quick-start:
+/deepseek-harness-0-1/building-development/prerequisites:
+  en: 031f29ae3f5c7546
+  zh: 31d0b734f074a872
+/deepseek-harness-0-1/building-development/quick-start:
   en: bcec94e2da9a2df9
   zh: 9adaa6ff5d72fca6
-/deepseek-harness-desktop-0-1/building-development/standalone-application-packaging:
+/deepseek-harness-0-1/building-development/standalone-application-packaging:
   en: ff46daa06546e962
   zh: fcb734444b228543
-/deepseek-harness-desktop-0-1/community-contributing:
+/deepseek-harness-0-1/community-contributing:
   en: 0ce2731817ff7f0c
   zh: 361a7e98b5c1c00e
-/deepseek-harness-desktop-0-1/license:
+/deepseek-harness-0-1/license:
   en: 75f8a77bf39e5cad
   zh: d55266e158523bed

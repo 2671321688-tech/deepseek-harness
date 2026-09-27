@@ -1,41 +1,28 @@
-# DeepSeek Harness Desktop (0.1)
+# DeepSeek Harness (0.1)
 
 English | [中文](README.zh.md)
 
-**DeepSeek Harness (`dsh`)** is an open-source, next-generation AI agent harness and productivity desktop workspace.
+**DeepSeek Harness (`dsh`)** is an open-source, plugin-based AI agent harness with a Web app and an Electron desktop app.
 
-In version **0.1**, the project introduces the **Depth Aesthetic Specification**, delivering an interface that is quiet, disciplined, distraction-free, and crafted for deep cognitive focus.
+Version **0.1** is a developer preview. Model tasks require a configured provider and API key; the app's APIs may change.
 
-## Watch the desktop demo
+## Watch the project tour
 
-[![DeepSeek Harness desktop demo preview](.github/media/deepseek-harness-preview.gif)](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/deepseek-harness-promo.mp4)
+[![DeepSeek Harness project tour preview](.github/media/deepseek-harness-preview.gif)](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/deepseek-harness-project-tour.mp4)
 
-[Watch the full 33-second video (MP4, 6.3 MB)](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/deepseek-harness-promo.mp4)
+[Watch the 31-second project tour (MP4, 0.7 MB)](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/deepseek-harness-project-tour.mp4)
+
+The video records the local Web app, whose application UI is shared with the Electron desktop app. It shows configuration and navigation without simulating an AI response or an account balance.
 
 ---
 
-## 🚀 Key Highlights in 0.1 (Production-Ready)
+## What the 0.1 app shows
 
-All features are strictly implemented in code with zero fake proposal mockups:
-
-- 🌊 **Seamless White-Background Startup Sequence**:
-  - Full, uninterrupted 346-frame handwriting animation of "DeepSeek" and the deep-sea blue whale emblem.
-  - Zero modal disruptions during startup; smoothly transitions directly to the main workspace.
-- 🎯 **Composer-Centric Control Hierarchy**:
-  - Replaces cluttered top docks and floating overlays.
-  - Model switching (e.g. `DeepSeek-V41-Flash High`), mode selection, and permissions (`+` menu) are consolidated directly around the composer input area.
-- 🧊 **Quiet Sidebar with Native Real Balance**:
-  - 2px hairline active indicator, eliminating gratuitous icons and noisy visual accents.
-  - Bottom-left account widget displays your actual available API balance (e.g., `¥5.41`) natively in real-time.
-- 🌓 **Pure Light & Deep Dark Monochrome Themes**:
-  - 0.5px hairline dividers; completely avoids harsh rainbow gradients or flashy glow effects.
-  - The dark theme provides a subtle cool undertone, while the light theme provides a paper-like, glare-free finish for long programming sessions.
-- ⚡ **Three-Tier Motion Engine & Spatial Acoustic Haptics**:
-  - Switchable motion profiles: **Full** (smooth fluid easing), **Reduced** (minimal transitions), and **Off** (instant response).
-  - High-fidelity acoustic sound feedback mapped to interface actions.
-- 🛡️ **Zero-Credential Security Architecture**:
-  - All API keys and secrets are securely stored using the platform's native credentials manager.
-  - Strictly audited to prevent any hardcoded credentials or data leakage.
+- **Workspaces and sessions:** Choose a workspace, create or revisit a session, and select a mode and permission setting near the composer.
+- **Model configuration:** Choose a model and effort level, configure a DeepSeek API key, or add a custom provider in Settings.
+- **Plugin management:** Browse available plugins and configure tools such as the terminal in the app.
+- **Agent presets:** Choose from Standard, PTC, Minimal, and Creator compositions.
+- **Appearance and controls:** Switch between light and dark themes and adjust general interaction settings.
 
 ---
 
@@ -53,12 +40,16 @@ Pre-built standalone desktop binaries are available for all major platforms:
 
 ---
 
+<a id="run"></a>
+
 ## 🛠️ Building & Development
 
 ### Prerequisites
 - **Node.js**: `>= 22.19.0`
 - **pnpm**: `11.7.0`
 - **Python**: `>= 3.10` (only required when executing Python runtime extensions)
+
+<a id="run-from-source"></a>
 
 ### Quick Start
 
