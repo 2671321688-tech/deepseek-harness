@@ -6,6 +6,12 @@
 
 在 **0.1** 版本中，项目正式引入 **Depth 极简设计美学规范**，从底层交互到视觉体验全面重构，专注于打造一个沉静、克制、高信息密度且无干扰的生产力桌面。
 
+## 观看桌面端演示
+
+[![DeepSeek Harness 桌面端演示预览](.github/media/deepseek-harness-preview.gif)](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/deepseek-harness-promo.mp4)
+
+[观看完整 33 秒宣传视频（MP4，6.3 MB）](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/deepseek-harness-promo.mp4)
+
 ---
 
 ## 🚀 0.1 核心特性（真实产品实现）
@@ -83,13 +89,10 @@
 在项目根目录下或进入 `apps/desktop`，执行下列命令即可生成对应平台的发布二进制：
 
 ```bash
-# 构建 Windows 安装包与便携包
 pnpm --filter @deepseek-ai/dsh-desktop run dist:win
 
-# 构建 macOS DMG 镜像
 pnpm --filter @deepseek-ai/dsh-desktop run dist:mac
 
-# 构建 Linux AppImage 与 deb
 pnpm --filter @deepseek-ai/dsh-desktop run dist:linux
 ```
 

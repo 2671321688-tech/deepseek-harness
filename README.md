@@ -6,6 +6,12 @@ English | [中文](README.zh.md)
 
 In version **0.1**, the project introduces the **Depth Aesthetic Specification**, delivering an interface that is quiet, disciplined, distraction-free, and crafted for deep cognitive focus.
 
+## Watch the desktop demo
+
+[![DeepSeek Harness desktop demo preview](.github/media/deepseek-harness-preview.gif)](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/deepseek-harness-promo.mp4)
+
+[Watch the full 33-second video (MP4, 6.3 MB)](https://github.com/2671321688-tech/deepseek-harness/releases/download/v0.1.0/deepseek-harness-promo.mp4)
+
 ---
 
 ## 🚀 Key Highlights in 0.1 (Production-Ready)
@@ -83,13 +89,10 @@ Pre-built standalone desktop binaries are available for all major platforms:
 From the root directory or inside `apps/desktop`, run:
 
 ```bash
-# Package Windows Installer & Portable Zip
 pnpm --filter @deepseek-ai/dsh-desktop run dist:win
 
-# Package macOS DMG
 pnpm --filter @deepseek-ai/dsh-desktop run dist:mac
 
-# Package Linux AppImage & Debian package
 pnpm --filter @deepseek-ai/dsh-desktop run dist:linux
 ```
 
